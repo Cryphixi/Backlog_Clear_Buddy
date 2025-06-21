@@ -18,13 +18,11 @@ export function LoginForm() {
     e.preventDefault();
     if (!steamId) return;
     setIsLoading(true);
-    // In a real app, you'd validate the Steam ID via the Steam API.
-    // For this simulation, we just navigate after a short delay to mimic an API call.
+    // In a real app, you might do some client-side validation first.
+    // For now, we'll just navigate to the dashboard with the steamId.
     setTimeout(() => {
-      // You could pass the steamId as a query parameter if needed
-      // e.g., router.push(`/dashboard?steamId=${steamId}`);
-      router.push('/dashboard');
-    }, 1500);
+      router.push(`/dashboard?steamId=${steamId}`);
+    }, 1000);
   };
 
   return (
@@ -36,7 +34,7 @@ export function LoginForm() {
             </div>
           <CardTitle className="font-headline text-2xl">Connect your Steam Account</CardTitle>
           <CardDescription>
-            Enter your Steam Profile ID to get started. We'll analyze your library and playtime.
+            Enter your 64-bit Steam Profile ID to get started. We'll analyze your library and playtime.
           </CardDescription>
         </CardHeader>
         <CardContent>

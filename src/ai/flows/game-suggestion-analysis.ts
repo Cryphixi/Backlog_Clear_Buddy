@@ -14,7 +14,7 @@ import {z} from 'genkit';
 
 // Input schema for the game suggestion flow
 const GameSuggestionInputSchema = z.object({
-  steamLibraryData: z.string().describe('JSON string of the user\u0027s Steam game library data, including game titles, playtime, and last played date.'),
+  steamLibraryData: z.string().describe('JSON string of the user\u0027s Steam game library data, including game titles and total playtime in hours.'),
   userSchedule: z.string().describe('JSON string of the user\u0027s weekly schedule, including available time slots for gaming.'),
 });
 export type GameSuggestionInput = z.infer<typeof GameSuggestionInputSchema>;
@@ -42,7 +42,7 @@ const gameSuggestionPrompt = ai.definePrompt({
   output: {schema: GameSuggestionOutputSchema},
   prompt: `You are a personal gaming assistant. Analyze the user's Steam game library and their schedule to suggest games from their library that they can play.
 
-Consider the user's available time slots and their game play style (playtime, last played date, etc.) to provide personalized game recommendations.
+Consider the user's available time slots and their game play style (based on total playtime) to provide personalized game recommendations.
 
 Only suggest games that are in the user's Steam library. Do not suggest games that the user does not own.
 
