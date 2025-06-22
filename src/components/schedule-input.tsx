@@ -25,6 +25,13 @@ export function ScheduleInput({ onScheduleChange }: ScheduleInputProps) {
     setLocalSchedule(newSchedule);
     onScheduleChange(newSchedule);
   };
+  
+  const formatHour = (hour: number) => {
+    if (hour === 12) return '12 PM';
+    if (hour === 0 || hour === 24) return '12 AM';
+    if (hour < 12) return `${hour} AM`;
+    return `${hour % 12} PM`;
+  }
 
   return (
     <Card className="h-full flex flex-col">
@@ -36,16 +43,16 @@ export function ScheduleInput({ onScheduleChange }: ScheduleInputProps) {
         <CardDescription>Select your available gaming slots below. Click a slot to toggle it.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col">
-        <div className="grid grid-cols-8 gap-1 text-center font-bold text-sm text-muted-foreground pb-2">
+        <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-1 text-center font-bold text-sm text-muted-foreground pb-2">
           <div></div>
           {days.map(day => <div key={day}>{day}</div>)}
         </div>
         <div className="flex-grow overflow-y-auto pr-2">
-            <div className="grid grid-cols-8 gap-1 text-center">
+            <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-1 text-center">
             {hours.map(hour => (
                 <React.Fragment key={hour}>
-                <div className="text-xs text-muted-foreground pr-2 flex items-center justify-end">
-                    {hour % 12 === 0 ? 12 : hour % 12}{hour < 12 || hour === 24 ? 'am' : 'pm'}
+                <div className="text-sm text-muted-foreground pr-2 flex items-center justify-end">
+                    {formatHour(hour)}
                 </div>
                 {days.map(day => (
                     <button
