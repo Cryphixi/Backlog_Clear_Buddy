@@ -1,19 +1,38 @@
 "use client";
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { Schedule, SuggestedGame, Player } from '@/lib/types';
 import { ScheduleInput } from '@/components/schedule-input';
 import { RecommendationDisplay } from '@/components/recommendation-display';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { getGameRecommendationsAction, getPlayerSummaryAction } from '@/app/actions';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Gamepad2, Loader2, User } from 'lucide-react';
+import { Gamepad2, Loader2, User, Settings, LogOut } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 function DashboardContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const steamId = searchParams.get('steamId');
   
@@ -25,6 +44,7 @@ function DashboardContent() {
 
   const [player, setPlayer] = useState<Player | null>(null);
   const [isPlayerLoading, setIsPlayerLoading] = useState(true);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   useEffect(() => {
     if (steamId) {
@@ -40,9 +60,10 @@ function DashboardContent() {
         })
         .finally(() => setIsPlayerLoading(false));
     } else {
-        setIsPlayerLoading(false);
+        // If no steamId, redirect to login
+        router.push('/');
     }
-  }, [steamId, toast]);
+  }, [steamId, toast, router]);
 
 
   const handleScheduleChange = (newSchedule: Schedule) => {
@@ -95,6 +116,10 @@ function DashboardContent() {
     }
   };
 
+  const handleSignOut = () => {
+    router.push('/');
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 border-b shrink-0">
@@ -116,15 +141,32 @@ function DashboardContent() {
                         <Skeleton className="h-10 w-10 rounded-full" />
                     </>
                 ) : player ? (
-                    <>
-                        <span className="text-sm font-medium">{player.personaname}</span>
-                        <Avatar>
-                            <AvatarImage src={player.avatarfull} alt={player.personaname} data-ai-hint="gamer avatar" />
-                            <AvatarFallback><User /></AvatarFallback>
-                        </Avatar>
-                    </>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                             <Button variant="ghost" className="flex items-center gap-2 p-1 h-auto focus-visible:ring-offset-0 focus-visible:ring-2 focus-visible:ring-ring rounded-full">
+                                <span className="text-sm font-medium sr-only md:not-sr-only">{player.personaname}</span>
+                                <Avatar>
+                                    <AvatarImage src={player.avatarfull} alt={player.personaname} data-ai-hint="gamer avatar" />
+                                    <AvatarFallback><User /></AvatarFallback>
+                                </Avatar>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel>{player.personaname}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => toast({ title: "Settings not implemented yet."})}>
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Settings</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => setShowSignOutConfirm(true)} className="text-destructive focus:text-destructive">
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Sign Out</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 ) : (
-                    <Avatar>
+                     <Avatar>
                         <AvatarFallback><User /></AvatarFallback>
                     </Avatar>
                 )}
@@ -139,6 +181,20 @@ function DashboardContent() {
           <RecommendationDisplay recommendations={recommendations} isLoading={isLoading} error={error} />
         </div>
       </main>
+      <AlertDialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+                This will return you to the login page.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut} className={buttonVariants({ variant: "destructive" })}>Sign Out</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Toaster />
     </div>
   );
