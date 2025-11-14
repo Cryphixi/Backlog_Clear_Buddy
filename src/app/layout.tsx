@@ -2,8 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SteamTime Navigator',
-  description: 'Your gaming companion to find the right game for your free time.',
+  title: 'Backlog Buddy',
+  description: 'Meet Clear, your AI-powered backlog clearing assistant that helps you plan when to play games based on your free time.',
 };
 
 export default function RootLayout({

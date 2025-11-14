@@ -122,17 +122,29 @@ function DashboardContent() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b shrink-0">
-        <div className="flex items-center gap-2">
-          <Gamepad2 className="w-8 h-8 text-accent" />
-          <h1 className="text-xl font-bold font-headline text-primary-foreground">
-            SteamTime Navigator
-          </h1>
+      <header className="flex items-center justify-between p-4 border-b shrink-0 bg-card/50 backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Gamepad2 className="w-8 h-8 text-accent" />
+            <div className="absolute inset-0 bg-accent/20 blur-md rounded-full -z-10" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold font-headline text-primary-foreground">
+              Backlog Buddy
+            </h1>
+            <p className="text-xs text-muted-foreground hidden sm:block">
+              Powered by Clear
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-4">
-            <Button onClick={handleGetRecommendations} disabled={isLoading}>
+            <Button 
+              onClick={handleGetRecommendations} 
+              disabled={isLoading}
+              className="gradient-primary hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+            >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Analyze & Suggest Games
+                {isLoading ? 'Analyzing...' : 'Analyze & Suggest Games'}
             </Button>
             <div className="flex items-center gap-2">
                 {isPlayerLoading ? (
@@ -173,11 +185,11 @@ function DashboardContent() {
             </div>
         </div>
       </header>
-      <main className="flex-1 flex flex-col md:flex-row gap-6 p-6 overflow-hidden">
-        <div className="w-full md:w-1/2 lg:w-3/5 h-full">
+      <main className="flex-1 flex flex-col md:flex-row gap-6 p-6 overflow-hidden bg-gradient-to-br from-background via-background to-muted/10">
+        <div className="w-full md:w-1/2 lg:w-3/5 h-full animate-fade-in">
           <ScheduleInput onScheduleChange={handleScheduleChange} />
         </div>
-        <div className="w-full md:w-1/2 lg:w-2/5 h-full">
+        <div className="w-full md:w-1/2 lg:w-2/5 h-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <RecommendationDisplay recommendations={recommendations} isLoading={isLoading} error={error} />
         </div>
       </main>

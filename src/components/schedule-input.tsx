@@ -34,24 +34,32 @@ export function ScheduleInput({ onScheduleChange }: ScheduleInputProps) {
   }
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader>
-        <CardTitle className="font-headline flex items-center gap-2">
-            <Clock className="w-6 h-6" />
+    <Card className="h-full flex flex-col bg-card/80 backdrop-blur-sm border-border/50 shadow-lg">
+      <CardHeader className="border-b border-border/50">
+        <CardTitle className="font-headline flex items-center gap-2 text-xl">
+            <div className="p-2 rounded-lg bg-accent/10">
+              <Clock className="w-5 h-5 text-accent" />
+            </div>
             Your Weekly Schedule
         </CardTitle>
-        <CardDescription>Select your available gaming slots below. Click a slot to toggle it.</CardDescription>
+        <CardDescription className="mt-2">
+          Select your available gaming slots below. Click a slot to toggle it on or off.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col">
-        <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-1 text-center font-bold text-sm text-muted-foreground pb-2">
+      <CardContent className="flex-grow flex flex-col pt-4">
+        <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-2 text-center font-semibold text-xs text-muted-foreground pb-3 sticky top-0 bg-card/80 backdrop-blur-sm z-10">
           <div></div>
-          {days.map(day => <div key={day}>{day}</div>)}
+          {days.map(day => (
+            <div key={day} className="py-1 rounded-md bg-muted/30">
+              {day}
+            </div>
+          ))}
         </div>
-        <div className="flex-grow overflow-y-auto pr-2">
-            <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-1 text-center">
+        <div className="flex-grow overflow-y-auto pr-2 -mr-2">
+            <div className="grid grid-cols-[auto_repeat(7,1fr)] gap-2 text-center">
             {hours.map(hour => (
                 <React.Fragment key={hour}>
-                <div className="text-sm text-muted-foreground pr-2 flex items-center justify-end">
+                <div className="text-xs text-muted-foreground pr-3 flex items-center justify-end font-medium py-1">
                     {formatHour(hour)}
                 </div>
                 {days.map(day => (
@@ -59,12 +67,14 @@ export function ScheduleInput({ onScheduleChange }: ScheduleInputProps) {
                     key={`${day}-${hour}`}
                     onClick={() => toggleSlot(day, hour)}
                     className={cn(
-                        "h-8 rounded-md transition-colors duration-200 ease-in-out",
+                        "h-9 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95",
+                        "border-2 border-transparent",
                         localSchedule[day]?.[hour]
-                        ? "bg-accent hover:bg-accent/80"
-                        : "bg-muted/50 hover:bg-muted"
+                        ? "bg-gradient-to-br from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 shadow-md shadow-accent/20 border-accent/30"
+                        : "bg-muted/30 hover:bg-muted/50 border-muted/50 hover:border-muted"
                     )}
-                    aria-label={`Toggle ${day} at ${hour}:00`}
+                    aria-label={`Toggle ${day} at ${formatHour(hour)}`}
+                    title={`${day} at ${formatHour(hour)}`}
                     />
                 ))}
                 </React.Fragment>
